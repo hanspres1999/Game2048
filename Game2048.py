@@ -1,11 +1,14 @@
 import random
+from numpy import array, zeros, rot90
 
-class Game:
+
+class Game2048:
     def __init__(self, n):
         self.n = n
         self.grid = [[0] * n for _ in range(n)]
-        self.new_tile()
-        self.new_tile()
+        self.play_game()
+        # self.new_tile()
+        # self.new_tile()
 
     def new_tile(self):
         empty_cells = []
@@ -22,57 +25,38 @@ class Game:
         for row in self.grid:
             print("| " + " | ".join(str(tile) for tile in row) + " |")
 
+    def move_col_left(self, col):
+        new_col = zeros(self.n, dtype=col.dtype)
+        j = 0
+        previous = None
+        for i in range(col.size):
+            if col[i] != 0:  # number different from zero
+                if previous is None:
+                    previous = col[i]
+                else:
+                    if previous == col[i]:
+                        new_col[j] = 2 * col[i]
+                        j += 1
+                        previous = None
+                    else:
+                        new_col[j] = previous
+                        j += 1
+                        previous = col[i]
+        if previous is not None:
+            new_col[j] = previous
+        return new_col
+
+    def move(self, direction):
+        # 0: left, 1: up, 2: right, 3: down
+        rotated_board = rot90(self.grid, direction)
+        cols = [rotated_board[i, :] for i in range(self.n)]
+        self.grid = [self.move_col_left(col) for col in cols]
+        self.grid = rot90(self.grid, -direction)
+
+        self.new_tile()
+
     def move_left(self):
-        for row in self.grid:
-            new_row = []
-            for tile in row:
-                if tile != 0:
-                    new_row.append(tile)
-
-            while len(new_row) < self.n:
-                new_row.append(0)
-
-            self.grid[row.index(new_row[0])] = new_row
-
-    def move_right(self):
-        for row in self.grid:
-            new_row = []
-            for tile in reversed(row):
-                if tile != 0:
-                    new_row.append(tile)
-
-            while len(new_row) < self.n:
-                new_row.append(0)
-
-            self.grid[row.index(new_row[0])] = new_row[::-1]
-
-    def move_up(self):
-        for col in range(self.n):
-            new_col = []
-            for row in range(self.n):
-                tile = self.grid[row][col]
-                if tile != 0:
-                    new_col.append(tile)
-
-            while len(new_col) < self.n:
-                new_col.append(0)
-
-            for row in range(self.n):
-                self.grid[row][col] = new_col[row]
-
-    def move_down(self):
-        for col in range(self.n):
-            new_col = []
-            for row in reversed(range(self.n)):
-                tile = self.grid[row][col]
-                if tile != 0:
-                    new_col.append(tile)
-
-            while len(new_col) < self.n:
-                new_col.append(0)
-
-            for row in reversed(range(self.n)):
-                self.grid[row][col] = new_col[row]
+        self.move(1)
 
     def game_over(self):
         for row in self.grid:
@@ -91,4 +75,15 @@ class Game:
                     return False
 
         return True
+
+    def get_input(self):
+        self.print_grid()
+        return input("a: Left, d:right, w:up, s:down")
+
+    def play_game(self):
+        dirs = {'a': 0, 'w': 1, 'd': 2, 's': 3}
+        while not self.game_over():
+            dir = self.get_input()
+            self.move(dirs[dir])
+
 
