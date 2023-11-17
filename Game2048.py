@@ -87,3 +87,7 @@ class Game2048:
             self.move(dirs[dir])
 
 
+
+#todo: Add error handelling on user inputs
+#todo: Keep a count of max tile and current score
+#todo: find a way to keep a record of states, actions and transitions.
