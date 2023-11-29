@@ -3,10 +3,11 @@ from numpy import array, zeros, rot90
 
 
 class Game2048:
-    def __init__(self, n):
+    def __init__(self, n, adversary, ):
         self.n = n
         self.grid = [[0] * n for _ in range(n)]
-        self.play_game()
+        self.end = False
+        # self.play_game()
         # self.new_tile()
         # self.new_tile()
 
@@ -76,11 +77,20 @@ class Game2048:
 
         return True
 
-    def get_input(self):
+    def get_action(self):
         self.print_grid()
-        return input("a: Left, d:right, w:up, s:down")
+        action = input("a: Left, d:right, w:up, s:down")
+        dirs = {'a': 0, 'w': 1, 'd': 2, 's': 3}
+        while not self.game_over():
+            action = input("a: Left, d:right, w:up, s:down")
 
-    def play_game(self):
+        return action
+
+    def play_game(self,action):
+        self.move(dirs[dir])
+
+    def get_action(self):
+        '''gets a move '''
         dirs = {'a': 0, 'w': 1, 'd': 2, 's': 3}
         while not self.game_over():
             dir = self.get_input()
