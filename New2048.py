@@ -113,7 +113,7 @@ class Game2048:
             return None
         else:
             actions = self.get_user_actions()
-            print(actions)
+            # print(actions)
             action = random.randint(0, len(actions) - 1)
             self.playUserAction(actions[action])
             self.previous_action = actions[action]
@@ -154,6 +154,7 @@ class Game2048:
     def playRandAdverseryAction(self):
         # given possible actions play one at random
         #   (calling playAdverseryAction might be useful)
+        #todo Find out from Will wtf needs to be done here
         pass
 
     def _generate_new_tile_(self):
@@ -223,7 +224,13 @@ class Game2048:
         result += "+------" * len(row) + "+"
         return result
 
+#todo More work on saving history of a game and playing a game from a history
 
+
+
+################################################################################
+#                             GAME PLAY                                        #
+################################################################################
 # game = Game2048(4)
 # game.start_game()
 # print(str(game))
@@ -251,10 +258,12 @@ game.start_game()
 #     print(game)
 #     game.playAdversaryAction()
 #     print(game)
-while not game.check_game_over() and not game.check_winner():
+
+while not game.check_game_over():
+# while not game.check_game_over() and not game.check_winner():
     game.playRandUser()
-    print(game)
+    # print(game)
     game.playAdversaryAction()
-    print(game)
+    # print(game)
 
 print(game.get_highest_tile())
