@@ -1,6 +1,7 @@
 import random
 from numpy import array, zeros, rot90
 import copy
+import numpy as np
 
 
 class Game2048:
@@ -50,7 +51,55 @@ class Game2048:
         grid = [self._move_col_left_(col) for col in cols]
         grid = rot90(grid, -action)
         return grid
+    
+    def _move_col_left_(self, arr):
+        temp = []
+        ind = 0
+        n = []
+        #print(arr.size)
+        i = 0
+        while i < len(arr):
+            foun = False
+            f = 0
+            s = 0
+            for j in range(i, len(arr)):
+                if arr[j] != 0 and not foun:
+                    f = arr[j]
+                    foun = True
 
+                elif(arr[j] != 0):
+                    s = arr[j]
+                    i = j
+                    break
+            if len(temp) != 0:
+                temp.append((temp[-1][-1], f))
+            temp.append((f, s))
+            i +=1
+        temp.append((s,0))
+        #print(temp)
+
+        to_ret = np.zeros(len(arr))
+        ind = 0
+        cp = temp.copy()
+        flag = False
+        for i in range(len(temp)):
+            try:
+                if temp[i][0] == temp[i][1]:
+                    to_ret[ind] = temp[i][0]*2
+                    if i != len(temp)-1:
+                        flag = True
+                        #print("wowowo")
+                        temp.pop(i+1)
+
+                else:
+
+                    to_ret[ind] = temp[i][0]
+                ind +=1
+            except:
+                pass
+        return to_ret
+    
+    '''
     def _move_col_left_(self, col):
         new_column = zeros(self.n, dtype=col.dtype)
         j = 0
@@ -70,7 +119,7 @@ class Game2048:
                         previous = col[i]
         if previous is not None:
             new_column[j] = previous
-        return new_column
+        return new_column'''
 
     def _are_grids_equal_(self,list1, list2):
         # Check if the dimensions are the same
@@ -100,7 +149,7 @@ class Game2048:
                     if not self._are_grids_equal_( self.grid ,self.try_action(i)):
                         actions.append(i)
 
-                return actions
+                return array(actions)
 
 
         # pass
@@ -114,9 +163,9 @@ class Game2048:
         else:
             actions = self.get_user_actions()
             # print(actions)
-            action = random.randint(0, len(actions) - 1)
-            self.playUserAction(actions[action])
-            self.previous_action = actions[action]
+            action = np.random.choice(actions)
+            self.playUserAction(action)
+            self.previous_action = action
         pass
 
     def playUserAction(self, action):
@@ -129,6 +178,7 @@ class Game2048:
             self.grid = self.try_action(action)
             self.previous_action = action
             self.play_state = False
+            self.check_winner()
         else:
             print(f'<func playUserAction>Game not in player mode: adversary action required, game state: {self.play_state}')
             return None
@@ -147,7 +197,7 @@ class Game2048:
         if self.play_state:
             print('<Func aetAdversaryActions>Game is in player mode: user action required')
         else:
-            adv_actions = [[i, j] for i in self.tile_dist.keys() for j in self._get_empty_cells_()]
+            adv_actions = [i for i in self._get_empty_cells_()]
             return adv_actions
         pass
 
@@ -182,6 +232,7 @@ class Game2048:
 
             self.game_count += 1
             self.game_history[self.game_count] = {'action': self.previous_action, 'adversary': tile}
+            self.check_game_over()
 
         pass
 
@@ -193,12 +244,14 @@ class Game2048:
     def check_winner(self):
         # check if 2048 is reached(uaer win) or if game board is full with no possible user actions(ad win)
         if 2048 in self.grid:
+            self.winner = 1
             return True
         else:
             return False
 
     def check_game_over(self):
         if len(self.get_user_actions()) == 0:  # no actions possible: Game over
+            self.winner = 2
             return True
         else:
             return False
@@ -207,6 +260,18 @@ class Game2048:
 
     def get_highest_tile(self):
         return max(element for sublist in self.grid for element in sublist)
+    
+    def play_random_moves_until_done(self):
+        while self.winner == None:
+            if self.check_winner:
+                return 1
+            if self.check_game_over:
+                return -1
+            if self.play_state:
+                self.playRandUser()
+            else:
+                self.playAdversaryAction()
+            
 
     def __str__(self):
         # to string displaying board
@@ -227,43 +292,43 @@ class Game2048:
 #todo More work on saving history of a game and playing a game from a history
 
 
-
-################################################################################
-#                             GAME PLAY                                        #
-################################################################################
-# game = Game2048(4)
-# game.start_game()
-# print(str(game))
-# game.playUserAction(1)
-# print(str(game))
-# game.play_state = True
-# game.playUserAction(2)
-# print(str(game))
-# game.play_state = True
-# game.playUserAction(3)
-# print(str(game))
-# game.play_state = True
-# game.playUserAction(4)
-# print(str(game))
-# print(game.play_state)
-# game.playAdversaryAction()
-# print(game)
-# game.playRandUser()
-# print(game)
-
-game = Game2048(6)
-game.start_game()
-# for i in range(10):
-#     game.playRandUser()
-#     print(game)
-#     game.playAdversaryAction()
-#     print(game)
-
-while not game.check_game_over():
-# while not game.check_game_over() and not game.check_winner():
-    game.playRandUser()
+def main():
+    ################################################################################
+    #                             GAME PLAY                                        #
+    ################################################################################
+    # game = Game2048(4)
+    # game.start_game()
+    # print(str(game))
+    # game.playUserAction(1)
+    # print(str(game))
+    # game.play_= True
+    # game.playUserAction(2)
+    # print(str(game))
+    # game.play_state = True
+    # game.playUserAction(3)
+    # print(str(game))
+    # game.play_state = True
+    # game.playUserAction(4)
+    # print(str(game))
+    # print(game.play_state)
+    # game.playAdversaryAction()
     # print(game)
-    game.playAdversaryAction()
+    # game.playRandUser()
     # print(game)
 
-print(game.get_highest_tile())
+    game = Game2048(6)
+    game.start_game()
+    # for i in range(10):
+    #     game.playRandUser()
+    #     print(game)
+    #     game.playAdversaryAction()
+    #     print(game)
+
+    while not game.check_game_over():
+    # while not game.check_game_over() and not game.check_winner():
+        game.playRandUser()
+        # print(game)
+        game.playAdversaryAction()
+        print(game)
+
+    print(game.get_highest_tile())
