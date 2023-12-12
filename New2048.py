@@ -189,7 +189,7 @@ class Game2048:
     def getAdverseryActions(self):
         """
         Works only if game state is in adversary mode
-        :return: a list of ists with each list having first element as the tile-number
+        :return: a list of lists with each list having first element as the tile-number
         and the second element as the coordinate of that tile.
         """
         # returns possible user actions as np array based on state
@@ -204,7 +204,10 @@ class Game2048:
     def playRandAdverseryAction(self):
         # given possible actions play one at random
         #   (calling playAdverseryAction might be useful)
-        #todo Find out from Will wtf needs to be done here
+        self._generate_new_tile_()
+
+
+
         pass
 
     def _generate_new_tile_(self):
@@ -283,7 +286,7 @@ class Game2048:
                 if cell == 0:
                     result += "{:^6}|".format(" ")
                 else:
-                    result += "{:^6}|".format(cell)
+                    result += "{:^6}|".format(int(cell))
             result += "\n"
 
         result += "+------" * len(row) + "+"
