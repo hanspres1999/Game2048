@@ -274,8 +274,25 @@ class Game2048:
                 self.playRandUser()
             else:
                 self.playAdversaryAction()
+                
+    def play_random_moves_for_n(self, n):
+        for _ in range(n):
+            if self.check_game_over:
+                return -1
+            if self.play_state:
+                self.playRandUser()
+            else:
+                self.playAdversaryAction()
             
 
+    def board_value(self):
+        
+        score = 0
+        for x in self.grid:
+            for y in x:
+                score += (y **2)
+        return score
+        
     def __str__(self):
         # to string displaying board
         result = ""
