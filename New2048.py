@@ -268,7 +268,7 @@ class Game2048:
         while self.winner == None:
             if self.check_winner:
                 return 1
-            if self.check_game_over:
+            if self.check_game_over():
                 return -1
             if self.play_state:
                 self.playRandUser()
@@ -277,8 +277,15 @@ class Game2048:
                 
     def play_random_moves_for_n(self, n):
         for _ in range(n):
-            if self.check_game_over:
+            if self.check_game_over():
                 return -1
+            if self.play_state:
+                self.playRandUser()
+            else:
+                self.playAdversaryAction()
+                
+    def play_til_over(self):
+        while self.check_game_over() == False:
             if self.play_state:
                 self.playRandUser()
             else:
